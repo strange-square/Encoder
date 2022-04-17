@@ -22,7 +22,7 @@ def encode(args):
 
     if args.cipher == 'caesar':
         if not args.key.isdigit():
-            print("Key is not a number")
+            print('Key is not a number')
             return
 
         args.key = int(args.key)
@@ -30,14 +30,14 @@ def encode(args):
 
     elif args.cipher == 'vigenere':
         if not args.key.isalpha():
-            print("Key is not a word")
+            print('Key is not a word')
             return
 
         res = vigenere_encode(args.key, text)
     
     elif args.cipher == 'vernam':
-        if not args.key.isdigit() or (int(args.key) < 0 or int(args.key) > 25):
-            print("The key is not a number from the [0, 25]")
+        if not 0 <= int(args.key) <= 25:
+            print('The key is not a number from the [0, 25]')
             return
 
         args.key = int(args.key)
@@ -51,7 +51,7 @@ def decode(args):
 
     if args.cipher == 'caesar':
         if not args.key.isdigit():
-            print("key is not digit")
+            print('key is not digit')
             return
 
         args.key = int(args.key)
@@ -59,14 +59,14 @@ def decode(args):
 
     elif args.cipher == 'vigenere':
         if not args.key.isalpha():
-            print("key is not word")
+            print('key is not word')
             return
 
         res = vigenere_decode(args.key, text)
 
     elif args.cipher == 'vernam':
-        if not args.key.isdigit() or (int(args.key) < 0 or int(args.key) > 25):
-            print("The key is not a number from the [0, 25]")
+        if not 0 <= int(args.key) <= 25:
+            print('The key is not a number from the [0, 25]')
             return
 
         args.key = int(args.key)
@@ -91,27 +91,35 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
         description='Work with caesar, vigenere, vernam ciphers')
-    subparsers = parser.add_subparsers(dest="cmd")
+    subparsers = parser.add_subparsers(dest='cmd')
+
+    funcs = []
 
     encoder = subparsers.add_parser('encode')
     encoder.set_defaults(func=encode)
-    encoder.add_argument(
-        '--cipher', choices=['caesar', 'vigenere', 'vernam'], dest='cipher', required=True)
-    encoder.add_argument('--key', dest='key', required=True)
-    encoder.add_argument('--input-file', dest='input_f',
-                         type=argparse.FileType('r'))
-    encoder.add_argument('--output-file', dest='output_f',
-                         type=argparse.FileType('w'))
+    funcs.append(encoder)
 
     decoder = subparsers.add_parser('decode')
     decoder.set_defaults(func=decode)
-    decoder.add_argument(
+    funcs.append(decoder)
+
+    for func in funcs:
+        func.add_argument(
         '--cipher', choices=['caesar', 'vigenere', 'vernam'], dest='cipher', required=True)
-    decoder.add_argument('--key', dest='key', required=True)
-    decoder.add_argument('--input-file', dest='input_f',
-                         type=argparse.FileType('r'))
-    decoder.add_argument('--output-file', dest='output_f',
-                         type=argparse.FileType('w'))
+        func.add_argument('--key', dest='key', required=True)
+
+
+    hacker = subparsers.add_parser('hack')
+    hacker.set_defaults(func=hack)
+    funcs.append(hacker)
+    hacker.add_argument('--model-file', dest='model_f',
+                        type=argparse.FileType('r'), required=True)
+
+    for func in funcs:
+        func.add_argument('--input-file', dest='input_f',
+                        type=argparse.FileType('r'))
+        func.add_argument('--output-file', dest='output_f',
+                        type=argparse.FileType('w'))
 
     trainer = subparsers.add_parser('train')
     trainer.set_defaults(func=train)
@@ -120,17 +128,8 @@ if __name__ == '__main__':
     trainer.add_argument('--model-file', dest='model_f',
                          type=argparse.FileType('w'), required=True)
 
-    hacker = subparsers.add_parser('hack')
-    hacker.set_defaults(func=hack)
-    hacker.add_argument('--input-file', dest='input_f',
-                        type=argparse.FileType('r'))
-    hacker.add_argument('--output-file', dest='output_f',
-                        type=argparse.FileType('w'))
-    hacker.add_argument('--model-file', dest='model_f',
-                        type=argparse.FileType('r'), required=True)
-
     args = parser.parse_args()
-    if not hasattr(args, "func"):
+    if not hasattr(args, 'func'):
         parser.print_help()
     else:
         args.func(args)

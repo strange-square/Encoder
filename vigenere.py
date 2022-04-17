@@ -1,12 +1,8 @@
 from math import ceil
 
 
-import string
-
-
-alphabet_low = string.ascii_lowercase
-alphabet_up = string.ascii_uppercase
-alphabet_size = len(alphabet_low)
+from alphabet import alphabet_low, alphabet_up, alphabet_size
+from alphabet import alphabet_low_dict
 
 
 def vigenere_encode(key, text):
@@ -16,12 +12,10 @@ def vigenere_encode(key, text):
 
     for i in range(len(text)):
         if text[i].isalpha() and text[i].islower():
-
             new_num = alphabet_low.find(text[i]) + alphabet_low.find(key[i])
             res.append(alphabet_low[new_num % alphabet_size])
 
         elif text[i].isalpha() and text[i].isupper():
-
             new_num = alphabet_up.find(text[i]) + alphabet_up.find(key_up[i])
             res.append(alphabet_up[new_num % alphabet_size])
 
@@ -35,7 +29,7 @@ def vigenere_decode(key, text):
     new_key = []
 
     for i in key:
-        new_num = (alphabet_size - alphabet_low.find(i))
+        new_num = (alphabet_size - alphabet_low_dict[i])
         new_key.append(alphabet_low[new_num])
 
     return vigenere_encode(''.join(new_key), text)

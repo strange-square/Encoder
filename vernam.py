@@ -1,8 +1,5 @@
-import string
-
-
-alphabet_low = string.ascii_lowercase
-alphabet_up = string.ascii_uppercase
+from alphabet import alphabet_low, alphabet_up, alphabet_size
+from alphabet import alphabet_low_dict, alphabet_up_dict
 
 
 def vernam_encode(key, text):
@@ -10,13 +7,11 @@ def vernam_encode(key, text):
 
     for i in text:
         if i.isalpha() and i.islower():
-
-            new_num = alphabet_low[alphabet_low.find(i) ^ key]
+            new_num = alphabet_low[alphabet_low_dict[i] ^ key]
             res.append(new_num)
 
         elif i.isalpha() and i.isupper():
-
-            new_num = alphabet_up[alphabet_up.find(i) ^ key]
+            new_num = alphabet_up[alphabet_up_dict[i] ^ key]
             res.append(new_num)
 
         else:
